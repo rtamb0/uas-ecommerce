@@ -707,38 +707,48 @@
             <!--begin::Row-->
             <div class="row">
               <?php
-              $koneksi = mysqli_connect("localhost","root","admin","northwind");
-              if(isset($_POST['save'])){ ?>
+              $koneksi = mysqli_connect(
+                  "localhost",
+                  "root",
+                  "admin",
+                  "northwind",
+              );
+              if (isset($_POST["save"])) { ?>
                 <!--begin::Col-->
                 <div class="col-12">
                   <div class="callout callout-info">
                     Data berhasil disimpan
-                    <?php
-                    // buat koneksi db
-
+                    <?php // buat koneksi db
+                  // buat koneksi db
+                  // buat koneksi db
                     // simpan data ke db
-                    mysqli_query($koneksi,
-                      "INSERT INTO customers
+                    mysqli_query(
+                        $koneksi,
+                        "INSERT INTO customers
                       VALUES(null, '$_POST[CustomerName]', '$_POST[ContactName]','$_POST[Address]',
-                      '$_POST[City]','$_POST[PostalCode]','$_POST[Country]')");
-                    ?>
+                      '$_POST[City]','$_POST[PostalCode]','$_POST[Country]')",
+                    ); ?>
                   </div>
                 </div>
-              <?php }?>
+              <?php }
+              ?>
 
-              <?php
-              if(isset($_GET['proc'])) {
-                if($_GET['proc'] == 'delete') {
-                    mysqli_query($koneksi, "DELETE FROM customers
-                    WHERE CustomerID = '".$_GET['id']."'");
-                    echo "<div class='col-12'>
+              <?php if (isset($_GET["proc"])) {
+                  if ($_GET["proc"] == "delete") {
+                      mysqli_query(
+                          $koneksi,
+                          "DELETE FROM customers
+                    WHERE CustomerID = '" .
+                              $_GET["id"] .
+                              "'",
+                      );
+                      echo "<div class='col-12'>
                             <div class='callout callout-warning'>
                               Data berhasil dihapus
                             </div>
                           </div>";
-                }
-              }
-              ?>
+                  }
+              } ?>
 
               <div class="col-sm-6">
                 <h3 class="mb-0">General Form</h3>
@@ -769,7 +779,9 @@
                   <div class="card-header"><div class="card-title">Customer Form</div></div>
                   <!--end::Header-->
                   <!--begin::Form-->
-                  <form name="form-customer" method="POST" action="<?=$_SERVER['PHP_SELF']?>">
+                  <form name="form-customer" method="POST" action="<?= $_SERVER[
+                      "PHP_SELF"
+                  ] ?>">
                     <!--begin::Body-->
                     <div class="card-body">
                         <div class="mb-3">
@@ -845,15 +857,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php 
-                    while($d = mysqli_fetch_array($getData)){
-                        echo"<tr>
+                    <?php while ($d = mysqli_fetch_array($getData)) {
+                        echo "<tr>
                                 <td>$d[CustomerName]</td>
                                 <td>$d[ContactName]</td>
                                 <td>$d[Address]</td>
                             </tr>";
-                    }
-                    ?>
+                    } ?>
                 </tbody>
               </table>
           </div>
