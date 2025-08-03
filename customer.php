@@ -1,12 +1,29 @@
+<?php
+
+if (isset($_GET["delete"]) && $_GET["delete"] != "") {
+    $host = "localhost";
+    $user = "root";
+    $pass = "admin";
+    $db = "rt_management";
+    $koneksi = mysqli_connect($host, $user, $pass, $db);
+    $deleteId = mysqli_real_escape_string($koneksi, $_GET["delete"]);
+    $deleted = mysqli_query(
+        $koneksi,
+        "DELETE FROM residents WHERE id='$deleteId'",
+    );
+    mysqli_close($koneksi);
+    header("Location: customer.php?deleted=" . ($deleted ? "1" : "0"));
+    exit();
+} ?>
 <!doctype html>
 <html lang="en">
   <!--begin::Head-->
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>AdminLTE 4 | General Form Elements</title>
+    <title>AdminLTE 4 | Customer Form Elements</title>
     <!--begin::Primary Meta Tags-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="title" content="AdminLTE 4 | General Form Elements" />
+    <meta name="title" content="AdminLTE 4 | Customer Form Elements" />
     <meta name="author" content="ColorlibHQ" />
     <meta
       name="description"
@@ -42,7 +59,7 @@
     />
     <!--end::Third Party Plugin(Bootstrap Icons)-->
     <!--begin::Required Plugin(AdminLTE)-->
-    <link rel="stylesheet" href="./template/dist/css/adminlte.css" />
+    <link rel="stylesheet" href="template/dist/css/adminlte.css" />
     <!--end::Required Plugin(AdminLTE)-->
   </head>
   <!--end::Head-->
@@ -86,7 +103,7 @@
                   <div class="d-flex">
                     <div class="flex-shrink-0">
                       <img
-                        src="../../../dist/assets/img/user1-128x128.jpg"
+                        src="AdminLTE4/dist/assets/img/user1-128x128.jpg"
                         alt="User Avatar"
                         class="img-size-50 rounded-circle me-3"
                       />
@@ -112,7 +129,7 @@
                   <div class="d-flex">
                     <div class="flex-shrink-0">
                       <img
-                        src="../../../dist/assets/img/user8-128x128.jpg"
+                        src="AdminLTE4/dist/assets/img/user8-128x128.jpg"
                         alt="User Avatar"
                         class="img-size-50 rounded-circle me-3"
                       />
@@ -138,7 +155,7 @@
                   <div class="d-flex">
                     <div class="flex-shrink-0">
                       <img
-                        src="../../../dist/assets/img/user3-128x128.jpg"
+                        src="AdminLTE4/dist/assets/img/user3-128x128.jpg"
                         alt="User Avatar"
                         class="img-size-50 rounded-circle me-3"
                       />
@@ -203,7 +220,7 @@
             <li class="nav-item dropdown user-menu">
               <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                 <img
-                  src="../../../dist/assets/img/user2-160x160.jpg"
+                  src="AdminLTE4/dist/assets/img/user2-160x160.jpg"
                   class="user-image rounded-circle shadow"
                   alt="User Image"
                 />
@@ -213,7 +230,7 @@
                 <!--begin::User Image-->
                 <li class="user-header text-bg-primary">
                   <img
-                    src="../../../dist/assets/img/user2-160x160.jpg"
+                    src="../AdminLTE4/dist/assets/img/user2-160x160.jpg"
                     class="rounded-circle shadow"
                     alt="User Image"
                   />
@@ -257,7 +274,7 @@
           <a href="../index.html" class="brand-link">
             <!--begin::Brand Image-->
             <img
-              src="../../../dist/assets/img/AdminLTELogo.png"
+              src="AdminLTE4/dist/assets/img/AdminLTELogo.png"
               alt="AdminLTE Logo"
               class="brand-image opacity-75 shadow"
             />
@@ -363,6 +380,24 @@
                     <a href="../layout/fixed-sidebar.html" class="nav-link">
                       <i class="nav-icon bi bi-circle"></i>
                       <p>Fixed Sidebar</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="../layout/fixed-header.html" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Fixed Header</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="../layout/fixed-footer.html" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Fixed Footer</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="../layout/fixed-complete.html" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Fixed Complete</p>
                     </a>
                   </li>
                   <li class="nav-item">
@@ -699,6 +734,188 @@
       </aside>
       <!--end::Sidebar-->
       <!--begin::App Main-->
+
+
+
+<!-- Koneksi database  -->
+
+  <?php
+  $host = "localhost";
+  $user = "root";
+  $pass = "admin";
+  $db = "rt_management";
+  $koneksi = mysqli_connect($host, $user, $pass, $db);
+
+  if (!$koneksi) {
+      die("Koneksi gagal: " . mysqli_connect_error());
+  }
+
+  $editMode = false;
+  $editCustomer = [
+      "id" => "",
+      "name" => "",
+      "nik" => "",
+      "kk_number" => "",
+      "gender" => "",
+      "birth_date" => "",
+      "religion" => "",
+      "occupation" => "",
+      "education" => "",
+      "marital_status" => "",
+      "status_in_family" => "",
+      "address" => "",
+      "rt_number" => "",
+      "rw_number" => "",
+  ];
+  if (isset($_GET["id"]) && $_GET["id"] != "") {
+      $editMode = true;
+      $id = mysqli_real_escape_string($koneksi, $_GET["id"]);
+      $result = mysqli_query(
+          $koneksi,
+          "SELECT * FROM rt_management WHERE id='$id' LIMIT 1",
+      );
+      if ($result && mysqli_num_rows($result) > 0) {
+          $editCustomer = mysqli_fetch_assoc($result);
+      }
+  }
+
+  // Proses hapus data
+  if (isset($_GET["delete"]) && $_GET["delete"] != "") {
+      $deleteId = mysqli_real_escape_string($koneksi, $_GET["delete"]);
+      mysqli_query($koneksi, "DELETE FROM rt_management WHERE id='$deleteId'");
+      header("Location: customer.php");
+      exit();
+  }
+
+  if ($_SERVER["REQUEST_METHOD"] == "POST") {
+      $id = isset($_POST["id"])
+          ? mysqli_real_escape_string($koneksi, $_POST["id"])
+          : "";
+      $name = mysqli_real_escape_string($koneksi, $_POST["name"]);
+      $nik = mysqli_real_escape_string($koneksi, $_POST["nik"]);
+      $kkNumber = mysqli_real_escape_string($koneksi, $_POST["kk_number"]);
+      $gender = mysqli_real_escape_string($koneksi, $_POST["gender"]);
+      $birthDate = mysqli_real_escape_string($koneksi, $_POST["birth_date"]);
+      $religion = mysqli_real_escape_string($koneksi, $_POST["religion"]);
+      $occupation = mysqli_real_escape_string($koneksi, $_POST["occupation"]);
+      $education = mysqli_real_escape_string($koneksi, $_POST["education"]);
+      $maritalStatus = mysqli_real_escape_string(
+          $koneksi,
+          $_POST["marital_status"],
+      );
+      $statusInFamily = mysqli_real_escape_string(
+          $koneksi,
+          $_POST["status_in_family"],
+      );
+      $address = mysqli_real_escape_string($koneksi, $_POST["address"]);
+      $rtNumber = mysqli_real_escape_string($koneksi, $_POST["rt_number"]);
+      $rwNumber = mysqli_real_escape_string($koneksi, $_POST["rw_number"]);
+
+      if ($id) {
+          // Update existing customer
+          $query = "UPDATE rt_management SET 
+            name='$name', 
+            nik='$nik',
+            kk_number='$kkNumber', 
+            gender='$gender', 
+            birth_date='$birthDate', 
+            religion='$religion',
+            occupation='$occupation', 
+            education='$education', 
+            martial_status='$maritalStatus', 
+            status_in_family='$statusInFamily', 
+            address='$address', 
+            rt_number='$rtNumber', 
+            rw_number='$rwNumber'
+            WHERE id='$id'";
+          $simpan = mysqli_query($koneksi, $query);
+          // Refresh data untuk form
+          $editMode = true;
+          $editCustomer = [
+              "name" => $name,
+              "nik" => $nik,
+              "kk_number" => $kkNumber,
+              "gender" => $gender,
+              "birth_date" => $birthDate,
+              "religion" => $religion,
+              "occupation" => $occupation,
+              "education" => $education,
+              "martial_status" => $maritalStatus,
+              "status_in_family" => $statusInFamily,
+              "address" => $address,
+              "rt_number" => $rtNumber,
+              "rw_number" => $rwNumber,
+          ];
+      } else {
+          // Insert new customer
+          $query = "INSERT INTO rt_management (name, nik, kk_number, gender, birth_date, religion, occupation, education, marital_status, status_in_family, address, rt_number, rw_number) 
+          VALUES ('$name', '$nik', '$kkNumber', '$gender', '$birthDate', '$religion', '$occupation', '$education', '$maritalStatus', '$statusInFamily', '$address', '$rtNumber', '$rwNumber')";
+          $simpan = mysqli_query($koneksi, $query);
+      }
+  }
+
+  // Untuk value form
+  $name = $editMode
+      ? htmlspecialchars($editCustomer["name"])
+      : (isset($_POST["name"])
+          ? htmlspecialchars($_POST["name"])
+          : "");
+  $nik = $editMode
+      ? htmlspecialchars($editCustomer["nik"])
+      : (isset($_POST["nik"])
+          ? htmlspecialchars($_POST["nik"])
+          : "");
+  $kkNumber = $editMode
+      ? htmlspecialchars($editCustomer["kk_number"])
+      : (isset($_POST["kk_number"])
+          ? htmlspecialchars($_POST["kk_number"])
+          : "");
+  $gender = $editMode
+      ? htmlspecialchars($editCustomer["gender"])
+      : (isset($_POST["gender"])
+          ? htmlspecialchars($_POST["gender"])
+          : "");
+  $postalCode = $editMode
+      ? htmlspecialchars($editCustomer["religion"])
+      : (isset($_POST["religion"])
+          ? htmlspecialchars($_POST["religion"])
+          : "");
+  $country = $editMode
+      ? htmlspecialchars($editCustomer["occupation"])
+      : (isset($_POST["occupation"])
+          ? htmlspecialchars($_POST["occupation"])
+          : "");
+  $customerId = $editMode
+      ? htmlspecialchars($editCustomer["education"])
+      : (isset($_POST["education"])
+          ? htmlspecialchars($_POST["education"])
+          : "");
+  $customerId = $editMode
+      ? htmlspecialchars($editCustomer["martial_status"])
+      : (isset($_POST["martial_status"])
+          ? htmlspecialchars($_POST["martial_status"])
+          : "");
+  $customerId = $editMode
+      ? htmlspecialchars($editCustomer["status_in_family"])
+      : (isset($_POST["status_in_family"])
+          ? htmlspecialchars($_POST["status_in_family"])
+          : "");
+  $customerId = $editMode
+      ? htmlspecialchars($editCustomer["address"])
+      : (isset($_POST["address"])
+          ? htmlspecialchars($_POST["address"])
+          : "");
+  $customerId = $editMode
+      ? htmlspecialchars($editCustomer["rt_number"])
+      : (isset($_POST["rt_number"])
+          ? htmlspecialchars($_POST["rt_number"])
+          : "");
+  $customerId = $editMode
+      ? htmlspecialchars($editCustomer["rw_number"])
+      : (isset($_POST["rw_number"])
+          ? htmlspecialchars($_POST["rw_number"])
+          : "");
+  ?>
       <main class="app-main">
         <!--begin::App Content Header-->
         <div class="app-content-header">
@@ -706,57 +923,11 @@
           <div class="container-fluid">
             <!--begin::Row-->
             <div class="row">
-              <?php
-              $koneksi = mysqli_connect(
-                  "localhost",
-                  "root",
-                  "admin",
-                  "northwind",
-              );
-              if (isset($_POST["save"])) { ?>
-                <!--begin::Col-->
-                <div class="col-12">
-                  <div class="callout callout-info">
-                    Data berhasil disimpan
-                    <?php // buat koneksi db
-                  // buat koneksi db
-                  // buat koneksi db
-                    // simpan data ke db
-                    mysqli_query(
-                        $koneksi,
-                        "INSERT INTO customers
-                      VALUES(null, '$_POST[CustomerName]', '$_POST[ContactName]','$_POST[Address]',
-                      '$_POST[City]','$_POST[PostalCode]','$_POST[Country]')",
-                    ); ?>
-                  </div>
-                </div>
-              <?php }
-              ?>
-
-              <?php if (isset($_GET["proc"])) {
-                  if ($_GET["proc"] == "delete") {
-                      mysqli_query(
-                          $koneksi,
-                          "DELETE FROM customers
-                    WHERE CustomerID = '" .
-                              $_GET["id"] .
-                              "'",
-                      );
-                      echo "<div class='col-12'>
-                            <div class='callout callout-warning'>
-                              Data berhasil dihapus
-                            </div>
-                          </div>";
-                  }
-              } ?>
-
-              <div class="col-sm-6">
-                <h3 class="mb-0">General Form</h3>
-              </div>
+              <div class="col-sm-6"><h3 class="mb-0">Customer Form</h3></div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
                   <li class="breadcrumb-item"><a href="#">Home</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">General Form</li>
+                  <li class="breadcrumb-item active" aria-current="page">Customer Form</li>
                 </ol>
               </div>
             </div>
@@ -767,106 +938,214 @@
         <!--end::App Content Header-->
         <!--begin::App Content-->
         <div class="app-content">
+          
           <!--begin::Container-->
           <div class="container-fluid">
             <!--begin::Row-->
             <div class="row g-4">
               <!--begin::Col-->
-              <div class="col">
-                <!--begin::Quick Example-->
-                <div class="card card-primary card-outline mb-4">
+              <div class="col-12">
+                <div class="callout callout-info">
+               <?php // Notifikasi simpan data
+
+if (isset($_GET["deleted"])) {
+                   if ($_GET["deleted"] == "1") {
+                       echo "Data berhasil dihapus!";
+                   } else {
+                       echo "Gagal menghapus data!";
+                   }
+               } elseif (isset($simpan)) {
+                   if ($simpan) {
+                       echo "<h5>Data saved successfully!</h5>";
+                   } else {
+                       echo "<h5>No Data Saved</h5>";
+                   }
+               } ?>
+                
+                </div>
+              </div>
+              <!--end::Col-->
+
+
+              <!--begin::Col-->
+              <div class="col-md-12">
+               
+                <!--begin::Customer Form-->
+                <div class="card card-warning card-outline mb-4">
                   <!--begin::Header-->
-                  <div class="card-header"><div class="card-title">Customer Form</div></div>
+                  <div class="card-header"><div class="card-title">Resident Form</div></div>
                   <!--end::Header-->
                   <!--begin::Form-->
-                  <form name="form-customer" method="POST" action="<?= $_SERVER[
-                      "PHP_SELF"
-                  ] ?>">
+                  <form action ="customer.php" method="post" class="form-horizontal">
+                                        <input type="hidden" name="CustomerID" id="CustomerID" value="<?php echo $customerId; ?>" />
                     <!--begin::Body-->
                     <div class="card-body">
-                        <div class="mb-3">
-                            <label for="customerName" class="form-label">Customer Name</label>
-                            <input
-                            type="text"
-                            class="form-control"
-                            id="customerName"
-                            />
+                      <div class="row mb-3">
+                        <label for="name" class="col-sm-2 col-form-label">Full Name</label>
+                        <div class="col-sm-10">
+                          <input type="text" class="form-control" name='name' id="name" value="<?php echo $name; ?>"/>
                         </div>
-                        <div class="mb-3">
-                            <label for="contactName" class="form-label">Contact Name</label>
-                            <input
-                            type="text"
-                            class="form-control"
-                            id="contactName"
-                            />
+                      </div>
+                      <div class="row mb-3">
+                        <label for="nik" class="col-sm-2 col-form-label">NIK</label>
+                        <div class="col-sm-10">
+                          <input type="num" class="form-control" name='nik' value="<?php echo $nik; ?>" id="nik" />
                         </div>
-                        <div class="mb-3">
-                            <label for="address" class="form-label">Address</label>
-                            <textarea class="form-control" id="address"></textarea>
+                      </div>
+                      <div class="row mb-3">
+                        <label for="Contact" class="col-sm-2 col-form-label">Contact Name</label>
+                        <div class="col-sm-10">
+                          <input type="text" class="form-control" name='Contact' id="Contact" value="<?php echo $contact; ?>" />
                         </div>
-                        <div class="mb-3">
-                            <label for="city" class="form-label">City</label>
-                            <input
-                            type="text"
-                            class="form-control"
-                            id="city"
-                            />
+                      </div>
+                      <div class="row mb-3">
+                        <label for="Address" class="col-sm-2 col-form-label">Address</label>
+                        <div class="col-sm-10">
+                            <textarea name="address" class="form-control" id="Address"><?php echo $address; ?></textarea>
+                          <!-- <input type="textarea" class="form-control" id="Address" /> -->
                         </div>
-                        <div class="mb-3">
-                            <label for="postalCode" class="form-label">Postal Code</label>
-                            <input
-                            type="number"
-                            class="form-control"
-                            id="postalCode"
-                            />
+                      </div>
+                      <div class="row mb-3">
+                        <label for="City" class="col-sm-2 col-form-label">City</label>
+                        <div class="col-sm-10">
+                          <input type="text" name='City' class="form-control" id="City" value="<?php echo $city; ?>" />
                         </div>
-                        <div class="mb-3">
-                            <label for="country" class="form-label">Country</label>
-                            <input
-                            type="text"
-                            class="form-control"
-                            id="country"
-                            />
+                      </div>
+                      <div class="row mb-3">
+                        <label for="PostalCode" class="col-sm-2 col-form-label">Postal Code</label>
+                        <div class="col-sm-10">
+                          <input type="text" class="form-control" name='PostalCode' value="<?php echo $postalCode; ?>" id="PostalCode" />
                         </div>
+                      </div>
+                      <div class="row mb-3">
+                        <label for="Country" class="col-sm-2 col-form-label">Country</label>
+                        <div class="col-sm-10">
+                          <input type="text" class="form-control" name='Country' id="Country" value="<?php echo $country; ?>" />
+                        </div>
+                      </div>
+                
                     </div>
                     <!--end::Body-->
                     <!--begin::Footer-->
                     <div class="card-footer">
-                      <button type="submit" class="btn btn-primary">Confirm</button>
-                      <button type="reset" class="btn btn-warning">Reset</button>
+                      <button type="submit" class="btn btn-warning">Save</button>
+                      <button type="reset" class="btn btn-danger float-end">Reset</button>
                     </div>
                     <!--end::Footer-->
                   </form>
                   <!--end::Form-->
                 </div>
-                <!--end::Quick Example-->
+                <!--end::Customer Form-->
+
+                <!-- Begin table  -->
+              <div class="col-md-12">
+                <div class="card mb-4">
+                  <div class="card-header">
+                    <h3 class="card-title">Customer List</h3>
+                    <div class="card-tools">
+                      <ul class="pagination pagination-sm float-end">
+                        <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
+                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
+                      </ul>
+                    </div>
+                  </div>
+                  <!-- /.card-header -->
+                  <div class="card-body p-0">
+                    <table class="table table-bordered">
+    <thead>
+        <tr>
+            <th style="width: 10px">#</th>
+            <th>Customer ID</th>
+            <th>Company Name</th>
+            <th>Contact Name</th>
+            <th>Address</th>
+            <th>City</th>
+            <th>Postal Code</th>
+            <th>Country</th>
+            <th style="width: 40px">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        $query = "SELECT * FROM customers ORDER BY CustomerID DESC";
+        $result = mysqli_query($koneksi, $query);
+
+        $nomor = 1; // Inisialisasi nomor urut
+
+        if ($result) {
+            while ($row = mysqli_fetch_assoc($result)) { ?>
+                            <tr class="align-middle">
+                              
+                                <td><?php echo $nomor++; ?></td>
+                                <td><?php echo htmlspecialchars(
+                                    $row["CustomerID"],
+                                ); ?></td>
+                                <td><?php echo htmlspecialchars(
+                                    $row["CompanyName"],
+                                ); ?></td>
+                                <td><?php echo htmlspecialchars(
+                                    $row["ContactName"],
+                                ); ?></td>
+                                <td><?php echo htmlspecialchars(
+                                    $row["Address"],
+                                ); ?></td>
+                                <td><?php echo htmlspecialchars(
+                                    $row["City"],
+                                ); ?></td>
+                                <td><?php echo htmlspecialchars(
+                                    $row["PostalCode"],
+                                ); ?></td>
+                                <td><?php echo htmlspecialchars(
+                                    $row["Country"],
+                                ); ?></td>
+                                <td>
+                                    <a href="customer.php?id=<?php echo htmlspecialchars(
+                                        $row["CustomerID"],
+                                    ); ?>" class="btn btn-warning btn-sm">
+                                        Edit
+                                    </a>
+                                    <a href="customer.php?delete=<?php echo htmlspecialchars(
+                                        $row["CustomerID"],
+                                    ); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                                        Delete
+                                    </a>
+                                </td>
+                            </tr>
+                            <?php }
+            mysqli_free_result($result);
+        } else {
+            echo "<tr><td colspan='9'>Error: " .
+                mysqli_error($koneksi) .
+                "</td></tr>";
+        }
+        mysqli_close($koneksi);
+        ?>
+                </tbody>
+            </table>
+                  </div>
+                  <!-- /.card-body -->
+                </div>
+              
+              </div>
+                <!-- Enf table -->
+              </div>
+              <!--end::Col-->
+              <!--begin::Col-->
+              <div class="col-md-6">
+             
+                <!--begin::Different Width-->
+            
+                <!--end::Different Width-->
+             
+              </div>
               <!--end::Col-->
             </div>
             <!--end::Row-->
           </div>
           <!--end::Container-->
-          <div class="card-body p-0">
-              <table class="table">
-                <thead>
-                    <tr>
-                        <th style="width: 10px">#</th>
-                        <th>Customer Name</th>
-                        <th>Contact Name</th>
-                        <th>Address</th>
-                        <th>Postal Code</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php while ($d = mysqli_fetch_array($getData)) {
-                        echo "<tr>
-                                <td>$d[CustomerName]</td>
-                                <td>$d[ContactName]</td>
-                                <td>$d[Address]</td>
-                            </tr>";
-                    } ?>
-                </tbody>
-              </table>
-          </div>
         </div>
         <!--end::App Content-->
       </main>
@@ -878,7 +1157,7 @@
         <!--end::To the end-->
         <!--begin::Copyright-->
         <strong>
-          Copyright &copy; 2014-2024&nbsp;
+          Copyright &copy; 2014-2025&nbsp;
           <a href="https://adminlte.io" class="text-decoration-none">AdminLTE.io</a>.
         </strong>
         All rights reserved.
@@ -907,7 +1186,7 @@
       crossorigin="anonymous"
     ></script>
     <!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
-    <script src="../../../dist/js/adminlte.js"></script>
+    <script src="AdminLTE4/dist/js/adminlte.js"></script>
     <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
     <script>
       const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';
@@ -918,7 +1197,7 @@
       };
       document.addEventListener('DOMContentLoaded', function () {
         const sidebarWrapper = document.querySelector(SELECTOR_SIDEBAR_WRAPPER);
-        if (sidebarWrapper && typeof OverlayScrollbarsGlobal?.OverlayScrollbars !== 'undefined') {
+        if (sidebarWrapper && OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined) {
           OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
             scrollbars: {
               theme: Default.scrollbarTheme,
