@@ -3,7 +3,7 @@
 if (isset($_GET["delete"]) && $_GET["delete"] != "") {
     $host = "localhost";
     $user = "root";
-    $pass = "admin";
+    $pass = "";
     $db = "rt_management";
     $koneksi = mysqli_connect($host, $user, $pass, $db);
     $deleteId = mysqli_real_escape_string($koneksi, $_GET["delete"]);
@@ -742,7 +742,7 @@ if (isset($_GET["delete"]) && $_GET["delete"] != "") {
   <?php
   $host = "localhost";
   $user = "root";
-  $pass = "admin";
+  $pass = "";
   $db = "rt_management";
   $koneksi = mysqli_connect($host, $user, $pass, $db);
 
@@ -751,7 +751,7 @@ if (isset($_GET["delete"]) && $_GET["delete"] != "") {
   }
 
   $editMode = false;
-  $editCustomer = [
+  $editResident = [
       "id" => "",
       "name" => "",
       "nik" => "",
@@ -772,10 +772,10 @@ if (isset($_GET["delete"]) && $_GET["delete"] != "") {
       $id = mysqli_real_escape_string($koneksi, $_GET["id"]);
       $result = mysqli_query(
           $koneksi,
-          "SELECT * FROM rt_management WHERE id='$id' LIMIT 1",
+          "SELECT * FROM residents WHERE id='$id' LIMIT 1",
       );
       if ($result && mysqli_num_rows($result) > 0) {
-          $editCustomer = mysqli_fetch_assoc($result);
+          $editResident = mysqli_fetch_assoc($result);
       }
   }
 
@@ -793,27 +793,27 @@ if (isset($_GET["delete"]) && $_GET["delete"] != "") {
           : "";
       $name = mysqli_real_escape_string($koneksi, $_POST["name"]);
       $nik = mysqli_real_escape_string($koneksi, $_POST["nik"]);
-      $kkNumber = mysqli_real_escape_string($koneksi, $_POST["kk_number"]);
+      $kkNumber = mysqli_real_escape_string($koneksi, $_POST["kkNumber"]);
       $gender = mysqli_real_escape_string($koneksi, $_POST["gender"]);
-      $birthDate = mysqli_real_escape_string($koneksi, $_POST["birth_date"]);
+      $birthDate = mysqli_real_escape_string($koneksi, $_POST["birthDate"]);
       $religion = mysqli_real_escape_string($koneksi, $_POST["religion"]);
       $occupation = mysqli_real_escape_string($koneksi, $_POST["occupation"]);
       $education = mysqli_real_escape_string($koneksi, $_POST["education"]);
       $maritalStatus = mysqli_real_escape_string(
           $koneksi,
-          $_POST["marital_status"],
+          $_POST["maritalStatus"],
       );
       $statusInFamily = mysqli_real_escape_string(
           $koneksi,
-          $_POST["status_in_family"],
+          $_POST["statusInFamily"],
       );
       $address = mysqli_real_escape_string($koneksi, $_POST["address"]);
-      $rtNumber = mysqli_real_escape_string($koneksi, $_POST["rt_number"]);
-      $rwNumber = mysqli_real_escape_string($koneksi, $_POST["rw_number"]);
+      $rtNumber = mysqli_real_escape_string($koneksi, $_POST["rtNumber"]);
+      $rwNumber = mysqli_real_escape_string($koneksi, $_POST["rwNumber"]);
 
       if ($id) {
           // Update existing customer
-          $query = "UPDATE rt_management SET 
+          $query = "UPDATE residents SET 
             name='$name', 
             nik='$nik',
             kk_number='$kkNumber', 
@@ -822,33 +822,16 @@ if (isset($_GET["delete"]) && $_GET["delete"] != "") {
             religion='$religion',
             occupation='$occupation', 
             education='$education', 
-            martial_status='$maritalStatus', 
+            marital_status='$maritalStatus', 
             status_in_family='$statusInFamily', 
             address='$address', 
             rt_number='$rtNumber', 
             rw_number='$rwNumber'
             WHERE id='$id'";
-          $simpan = mysqli_query($koneksi, $query);
-          // Refresh data untuk form
-          $editMode = true;
-          $editCustomer = [
-              "name" => $name,
-              "nik" => $nik,
-              "kk_number" => $kkNumber,
-              "gender" => $gender,
-              "birth_date" => $birthDate,
-              "religion" => $religion,
-              "occupation" => $occupation,
-              "education" => $education,
-              "martial_status" => $maritalStatus,
-              "status_in_family" => $statusInFamily,
-              "address" => $address,
-              "rt_number" => $rtNumber,
-              "rw_number" => $rwNumber,
-          ];
+            $simpan = mysqli_query($koneksi, $query);
       } else {
           // Insert new customer
-          $query = "INSERT INTO rt_management (name, nik, kk_number, gender, birth_date, religion, occupation, education, marital_status, status_in_family, address, rt_number, rw_number) 
+          $query = "INSERT INTO residents (name, nik, kk_number, gender, birth_date, religion, occupation, education, marital_status, status_in_family, address, rt_number, rw_number) 
           VALUES ('$name', '$nik', '$kkNumber', '$gender', '$birthDate', '$religion', '$occupation', '$education', '$maritalStatus', '$statusInFamily', '$address', '$rtNumber', '$rwNumber')";
           $simpan = mysqli_query($koneksi, $query);
       }
@@ -856,62 +839,67 @@ if (isset($_GET["delete"]) && $_GET["delete"] != "") {
 
   // Untuk value form
   $name = $editMode
-      ? htmlspecialchars($editCustomer["name"])
+      ? htmlspecialchars($editResident["name"])
       : (isset($_POST["name"])
           ? htmlspecialchars($_POST["name"])
           : "");
   $nik = $editMode
-      ? htmlspecialchars($editCustomer["nik"])
+      ? htmlspecialchars($editResident["nik"])
       : (isset($_POST["nik"])
           ? htmlspecialchars($_POST["nik"])
           : "");
   $kkNumber = $editMode
-      ? htmlspecialchars($editCustomer["kk_number"])
+      ? htmlspecialchars($editResident["kk_number"])
       : (isset($_POST["kk_number"])
           ? htmlspecialchars($_POST["kk_number"])
           : "");
   $gender = $editMode
-      ? htmlspecialchars($editCustomer["gender"])
+      ? htmlspecialchars($editResident["gender"])
       : (isset($_POST["gender"])
           ? htmlspecialchars($_POST["gender"])
           : "");
-  $postalCode = $editMode
-      ? htmlspecialchars($editCustomer["religion"])
+  $birthDate = $editMode
+      ? htmlspecialchars($editResident["birth_date"])
+      : (isset($_POST["birth_date"])
+          ? htmlspecialchars($_POST["birth_date"])
+          : "");        
+  $religion = $editMode
+      ? htmlspecialchars($editResident["religion"])
       : (isset($_POST["religion"])
           ? htmlspecialchars($_POST["religion"])
           : "");
-  $country = $editMode
-      ? htmlspecialchars($editCustomer["occupation"])
+  $occupation = $editMode
+      ? htmlspecialchars($editResident["occupation"])
       : (isset($_POST["occupation"])
           ? htmlspecialchars($_POST["occupation"])
           : "");
-  $customerId = $editMode
-      ? htmlspecialchars($editCustomer["education"])
+  $education = $editMode
+      ? htmlspecialchars($editResident["education"])
       : (isset($_POST["education"])
           ? htmlspecialchars($_POST["education"])
           : "");
-  $customerId = $editMode
-      ? htmlspecialchars($editCustomer["martial_status"])
-      : (isset($_POST["martial_status"])
-          ? htmlspecialchars($_POST["martial_status"])
+  $maritalStatus = $editMode
+      ? htmlspecialchars($editResident["marital_status"])
+      : (isset($_POST["marital_status"])
+          ? htmlspecialchars($_POST["marital_status"])
           : "");
-  $customerId = $editMode
-      ? htmlspecialchars($editCustomer["status_in_family"])
+  $statusInFamily = $editMode
+      ? htmlspecialchars($editResident["status_in_family"])
       : (isset($_POST["status_in_family"])
           ? htmlspecialchars($_POST["status_in_family"])
           : "");
-  $customerId = $editMode
-      ? htmlspecialchars($editCustomer["address"])
+  $address = $editMode
+      ? htmlspecialchars($editResident["address"])
       : (isset($_POST["address"])
           ? htmlspecialchars($_POST["address"])
           : "");
-  $customerId = $editMode
-      ? htmlspecialchars($editCustomer["rt_number"])
+  $rtNumber = $editMode
+      ? htmlspecialchars($editResident["rt_number"])
       : (isset($_POST["rt_number"])
           ? htmlspecialchars($_POST["rt_number"])
           : "");
-  $customerId = $editMode
-      ? htmlspecialchars($editCustomer["rw_number"])
+  $rwNumber = $editMode
+      ? htmlspecialchars($editResident["rw_number"])
       : (isset($_POST["rw_number"])
           ? htmlspecialchars($_POST["rw_number"])
           : "");
@@ -977,53 +965,129 @@ if (isset($_GET["deleted"])) {
                   <!--end::Header-->
                   <!--begin::Form-->
                   <form action ="customer.php" method="post" class="form-horizontal">
-                                        <input type="hidden" name="CustomerID" id="CustomerID" value="<?php echo $customerId; ?>" />
+                    <input type="hidden" name="id" id="id" value="<?php echo $id; ?>" />
                     <!--begin::Body-->
                     <div class="card-body">
                       <div class="row mb-3">
                         <label for="name" class="col-sm-2 col-form-label">Full Name</label>
                         <div class="col-sm-10">
-                          <input type="text" class="form-control" name='name' id="name" value="<?php echo $name; ?>"/>
+                          <input type="text" class="form-control" name='name' id="name" value="<?php echo $name; ?>" required />
                         </div>
                       </div>
                       <div class="row mb-3">
                         <label for="nik" class="col-sm-2 col-form-label">NIK</label>
                         <div class="col-sm-10">
-                          <input type="num" class="form-control" name='nik' value="<?php echo $nik; ?>" id="nik" />
+                          <input type="number" class="form-control" name='nik' value="<?php echo $nik; ?>" id="nik" required />
                         </div>
                       </div>
                       <div class="row mb-3">
-                        <label for="Contact" class="col-sm-2 col-form-label">Contact Name</label>
+                        <label for="kkNumber" class="col-sm-2 col-form-label">No. Kartu Keluarga</label>
                         <div class="col-sm-10">
-                          <input type="text" class="form-control" name='Contact' id="Contact" value="<?php echo $contact; ?>" />
+                          <input type="number" class="form-control" name='kkNumber' id="kkNumber" value="<?php echo $kkNumber; ?>" required/>
                         </div>
                       </div>
                       <div class="row mb-3">
-                        <label for="Address" class="col-sm-2 col-form-label">Address</label>
+                          <label for="gender" class="col-sm-2 col-form-label">Gender</label>
+                          <div class="col-sm-10">
+                            <select class="form-select" id="gender" name="gender" required>
+                              <option selected disabled value="" <?= ($gender == "") ? "selected" : "" ?>>Choose...</option>
+                              <option <?= ($gender == "Laki-laki") ? "selected" : "" ?>>Laki-laki</option>
+                              <option <?= ($gender == "Perempuan") ? "selected" : "" ?>>Perempuan</option>
+                            </select>
+                          </div>
+                      </div>
+                      <div class="row mb-3">
+                        <label for="birthDate" class="col-sm-2 col-form-label">Birth Date</label>
                         <div class="col-sm-10">
-                            <textarea name="address" class="form-control" id="Address"><?php echo $address; ?></textarea>
-                          <!-- <input type="textarea" class="form-control" id="Address" /> -->
+                          <input type="date" name='birthDate' class="form-control" id="birthDate" value="<?php echo $birthDate; ?>" required />
                         </div>
                       </div>
                       <div class="row mb-3">
-                        <label for="City" class="col-sm-2 col-form-label">City</label>
+                          <label for="religion" class="col-sm-2 col-form-label">Religion</label>
+                          <div class="col-sm-10">
+                            <select class="form-select" id="religion" name="religion" required> 
+                              <option selected disabled value="" <?= ($religion == "") ? "selected" : "" ?>>Choose...</option>
+                              <option <?= ($religion == "Islam") ? "selected" : "" ?>>Islam</option>
+                              <option <?= ($religion == "Katolik") ? "selected" : "" ?>>Katolik</option>
+                              <option <?= ($religion == "Kristen") ? "selected" : "" ?>>Kristen</option>
+                              <option <?= ($religion == "Buddha") ? "selected" : "" ?>>Buddha</option>
+                              <option <?= ($religion == "Hindu") ? "selected" : "" ?>>Hindu</option>
+                            </select>
+                          </div>
+                      </div>
+                      <div class="row mb-3">
+                          <label for="occupation" class="col-sm-2 col-form-label">Occupation</label>
+                          <div class="col-sm-10">
+                            <select class="form-select" id="occupation" name="occupation" required>
+                              <option selected disabled value="" <?= ($occupation == "") ? "selected" : "" ?>>Choose...</option>
+                              <option <?= ($occupation == "Karyawan Swasta") ? "selected" : "" ?>>Karyawan Swasta</option>
+                              <option <?= ($occupation == "Ibu Rumah Tangga") ? "selected" : "" ?>>Ibu Rumah Tangga</option>
+                              <option <?= ($occupation == "Mahasiswa") ? "selected" : "" ?>>Mahasiswa</option>
+                              <option <?= ($occupation == "Guru") ? "selected" : "" ?>>Guru</option>
+                              <option <?= ($occupation == "Pedagang") ? "selected" : "" ?>>Pedagang</option>
+                              <option <?= ($occupation == "Tidak Bekerja") ? "selected" : "" ?>>Tidak Bekerja</option>
+                              <option <?= ($occupation == "Pensiun") ? "selected" : "" ?>>Pensiun</option>
+                            </select>
+                          </div>
+                      </div>
+                      <div class="row mb-3">
+                          <label for="education" class="col-sm-2 col-form-label">Education</label>
+                          <div class="col-sm-10">
+                            <select class="form-select" id="education" name="education" required>
+                              <option selected disabled value="" <?= ($education == "") ? "selected" : "" ?>>Choose...</option>
+                              <option <?= ($education == "SD") ? "selected" : "" ?>>SD</option>
+                              <option <?= ($education == "SMP") ? "selected" : "" ?>>SMP</option>
+                              <option <?= ($education == "SMA") ? "selected" : "" ?>>SMA</option>
+                              <option <?= ($education == "SMK") ? "selected" : "" ?>>SMK</option>
+                              <option <?= ($education == "D1") ? "selected" : "" ?>>D1</option>
+                              <option <?= ($education == "D2") ? "selected" : "" ?>>D2</option>
+                              <option <?= ($education == "D3") ? "selected" : "" ?>>D3</option>
+                              <option <?= ($education == "D4/S1") ? "selected" : "" ?>>D4/S1</option>
+                              <option <?= ($education == "S2") ? "selected" : "" ?>>S2</option>
+                              <option <?= ($education == "S3") ? "selected" : "" ?>>S3</option>
+                            </select>
+                          </div>
+                      </div>
+                      <div class="row mb-3">
+                          <label for="maritalStatus" class="col-sm-2 col-form-label">Marital Status</label>
+                          <div class="col-sm-10">
+                            <select class="form-select" id="maritalStatus" name="maritalStatus" required>
+                              <option selected disabled value="" <?= ($maritalStatus == "") ? "selected" : "" ?>>Choose...</option>
+                              <option <?= ($maritalStatus == "Belum Menikah") ? "selected" : "" ?>>Belum Menikah</option>
+                              <option <?= ($maritalStatus == "Menikah") ? "selected" : "" ?>>Menikah</option>
+                            </select>
+                          </div>
+                      </div>
+                      <div class="row mb-3">
+                          <label for="statusInFamily" class="col-sm-2 col-form-label">Status in Family</label>
+                          <div class="col-sm-10">
+                            <select class="form-select" id="statusInFamily" name="statusInFamily" required>
+                              <option selected disabled value="" <?= ($statusInFamily == "") ? "selected" : "" ?>>Choose...</option>
+                              <option <?= ($statusInFamily == "Kepala Keluarga") ? "selected" : "" ?>>Kepala Keluarga</option>
+                              <option <?= ($statusInFamily == "Suami") ? "selected" : "" ?>>Suami</option>
+                              <option <?= ($statusInFamily == "Istri") ? "selected" : "" ?>>Istri</option>
+                              <option <?= ($statusInFamily == "Anak") ? "selected" : "" ?>>Anak</option>
+                            </select>
+                          </div>
+                      </div>
+                      <div class="row mb-3">
+                        <label for="address" class="col-sm-2 col-form-label">Address</label>
                         <div class="col-sm-10">
-                          <input type="text" name='City' class="form-control" id="City" value="<?php echo $city; ?>" />
+                            <textarea name="address" class="form-control" id="address" value="<?php echo $address; ?>" required></textarea>
                         </div>
                       </div>
                       <div class="row mb-3">
-                        <label for="PostalCode" class="col-sm-2 col-form-label">Postal Code</label>
+                        <label for="rtNumber" class="col-sm-2 col-form-label">RT.</label>
                         <div class="col-sm-10">
-                          <input type="text" class="form-control" name='PostalCode' value="<?php echo $postalCode; ?>" id="PostalCode" />
+                          <input type="number" class="form-control" name='rtNumber' id="rtNumber" value="<?php echo $rtNumber; ?>" required />
                         </div>
                       </div>
                       <div class="row mb-3">
-                        <label for="Country" class="col-sm-2 col-form-label">Country</label>
+                        <label for="rwNumber" class="col-sm-2 col-form-label">RW.</label>
                         <div class="col-sm-10">
-                          <input type="text" class="form-control" name='Country' id="Country" value="<?php echo $country; ?>" />
+                          <input type="number" class="form-control" name='rwNumber' id="rwNumber" value="<?php echo $rwNumber; ?>" required />
                         </div>
                       </div>
-                
                     </div>
                     <!--end::Body-->
                     <!--begin::Footer-->
@@ -1058,19 +1122,25 @@ if (isset($_GET["deleted"])) {
     <thead>
         <tr>
             <th style="width: 10px">#</th>
-            <th>Customer ID</th>
-            <th>Company Name</th>
-            <th>Contact Name</th>
+            <th>Full Name</th>
+            <th>NIK</th>
+            <th>No. Kartu Keluarga</th>
+            <th>Gender</th>
+            <th>Birth Data</th>
+            <th>Religion</th>
+            <th>Occupation</th>
+            <th>Education</th>
+            <th>Marital Status</th>
+            <th>Status in Family</th>
             <th>Address</th>
-            <th>City</th>
-            <th>Postal Code</th>
-            <th>Country</th>
+            <th>RT.</th>
+            <th>RW.</th>
             <th style="width: 40px">Action</th>
         </tr>
     </thead>
     <tbody>
         <?php
-        $query = "SELECT * FROM customers ORDER BY CustomerID DESC";
+        $query = "SELECT * FROM residents ORDER BY id DESC";
         $result = mysqli_query($koneksi, $query);
 
         $nomor = 1; // Inisialisasi nomor urut
@@ -1081,34 +1151,52 @@ if (isset($_GET["deleted"])) {
                               
                                 <td><?php echo $nomor++; ?></td>
                                 <td><?php echo htmlspecialchars(
-                                    $row["CustomerID"],
+                                    $row["name"],
                                 ); ?></td>
                                 <td><?php echo htmlspecialchars(
-                                    $row["CompanyName"],
+                                    $row["nik"],
                                 ); ?></td>
                                 <td><?php echo htmlspecialchars(
-                                    $row["ContactName"],
+                                    $row["kk_number"],
                                 ); ?></td>
                                 <td><?php echo htmlspecialchars(
-                                    $row["Address"],
+                                    $row["gender"],
                                 ); ?></td>
                                 <td><?php echo htmlspecialchars(
-                                    $row["City"],
+                                    $row["birth_date"],
                                 ); ?></td>
                                 <td><?php echo htmlspecialchars(
-                                    $row["PostalCode"],
+                                    $row["religion"],
                                 ); ?></td>
                                 <td><?php echo htmlspecialchars(
-                                    $row["Country"],
+                                    $row["occupation"],
+                                ); ?></td>
+                                <td><?php echo htmlspecialchars(
+                                    $row["education"],
+                                ); ?></td>
+                                <td><?php echo htmlspecialchars(
+                                    $row["marital_status"],
+                                ); ?></td>
+                                <td><?php echo htmlspecialchars(
+                                    $row["status_in_family"],
+                                ); ?></td>
+                                <td><?php echo htmlspecialchars(
+                                    $row["address"],
+                                ); ?></td>
+                                <td><?php echo htmlspecialchars(
+                                    $row["rt_number"],
+                                ); ?></td>
+                                <td><?php echo htmlspecialchars(
+                                    $row["rw_number"],
                                 ); ?></td>
                                 <td>
                                     <a href="customer.php?id=<?php echo htmlspecialchars(
-                                        $row["CustomerID"],
+                                        $row["id"],
                                     ); ?>" class="btn btn-warning btn-sm">
                                         Edit
                                     </a>
                                     <a href="customer.php?delete=<?php echo htmlspecialchars(
-                                        $row["CustomerID"],
+                                        $row["id"],
                                     ); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
                                         Delete
                                     </a>
