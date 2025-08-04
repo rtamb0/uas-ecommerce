@@ -214,6 +214,7 @@ if (isset($_GET["delete"]) && $_GET["delete"] != "") {
       die("Koneksi gagal: " . mysqli_connect_error());
   }
 
+  $id = "";
   $editMode = false;
   $editResident = [
       "id" => "",
@@ -241,14 +242,6 @@ if (isset($_GET["delete"]) && $_GET["delete"] != "") {
       if ($result && mysqli_num_rows($result) > 0) {
           $editResident = mysqli_fetch_assoc($result);
       }
-  }
-
-  // Proses hapus data
-  if (isset($_GET["delete"]) && $_GET["delete"] != "") {
-      $deleteId = mysqli_real_escape_string($koneksi, $_GET["delete"]);
-      mysqli_query($koneksi, "DELETE FROM rt_management WHERE id='$deleteId'");
-      header("Location: customer.php");
-      exit();
   }
 
   if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -302,6 +295,7 @@ if (isset($_GET["delete"]) && $_GET["delete"] != "") {
       $_POST = [];
       $editMode = false;
       $id = "";
+      unset($_GET["id"]);
       $editResident = [
           "id" => "",
           "name" => "",
