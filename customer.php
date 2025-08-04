@@ -1,9 +1,8 @@
 <?php
-
 if (isset($_GET["delete"]) && $_GET["delete"] != "") {
     $host = "localhost";
     $user = "root";
-    $pass = "";
+    $pass = "admin";
     $db = "rt_management";
     $koneksi = mysqli_connect($host, $user, $pass, $db);
     $deleteId = mysqli_real_escape_string($koneksi, $_GET["delete"]);
@@ -742,7 +741,7 @@ if (isset($_GET["delete"]) && $_GET["delete"] != "") {
   <?php
   $host = "localhost";
   $user = "root";
-  $pass = "";
+  $pass = "admin";
   $db = "rt_management";
   $koneksi = mysqli_connect($host, $user, $pass, $db);
 
@@ -828,13 +827,31 @@ if (isset($_GET["delete"]) && $_GET["delete"] != "") {
             rt_number='$rtNumber', 
             rw_number='$rwNumber'
             WHERE id='$id'";
-            $simpan = mysqli_query($koneksi, $query);
+          $simpan = mysqli_query($koneksi, $query);
       } else {
           // Insert new customer
           $query = "INSERT INTO residents (name, nik, kk_number, gender, birth_date, religion, occupation, education, marital_status, status_in_family, address, rt_number, rw_number) 
           VALUES ('$name', '$nik', '$kkNumber', '$gender', '$birthDate', '$religion', '$occupation', '$education', '$maritalStatus', '$statusInFamily', '$address', '$rtNumber', '$rwNumber')";
           $simpan = mysqli_query($koneksi, $query);
       }
+      $_POST = [];
+      $editMode = false;
+      $editResident = [
+          "id" => "",
+          "name" => "",
+          "nik" => "",
+          "kk_number" => "",
+          "gender" => "",
+          "birth_date" => "",
+          "religion" => "",
+          "occupation" => "",
+          "education" => "",
+          "marital_status" => "",
+          "status_in_family" => "",
+          "address" => "",
+          "rt_number" => "",
+          "rw_number" => "",
+      ];
   }
 
   // Untuk value form
@@ -850,8 +867,8 @@ if (isset($_GET["delete"]) && $_GET["delete"] != "") {
           : "");
   $kkNumber = $editMode
       ? htmlspecialchars($editResident["kk_number"])
-      : (isset($_POST["kk_number"])
-          ? htmlspecialchars($_POST["kk_number"])
+      : (isset($_POST["kkNumber"])
+          ? htmlspecialchars($_POST["kkNumber"])
           : "");
   $gender = $editMode
       ? htmlspecialchars($editResident["gender"])
@@ -860,9 +877,9 @@ if (isset($_GET["delete"]) && $_GET["delete"] != "") {
           : "");
   $birthDate = $editMode
       ? htmlspecialchars($editResident["birth_date"])
-      : (isset($_POST["birth_date"])
-          ? htmlspecialchars($_POST["birth_date"])
-          : "");        
+      : (isset($_POST["birthDate"])
+          ? htmlspecialchars($_POST["birthDate"])
+          : "");
   $religion = $editMode
       ? htmlspecialchars($editResident["religion"])
       : (isset($_POST["religion"])
@@ -880,13 +897,13 @@ if (isset($_GET["delete"]) && $_GET["delete"] != "") {
           : "");
   $maritalStatus = $editMode
       ? htmlspecialchars($editResident["marital_status"])
-      : (isset($_POST["marital_status"])
-          ? htmlspecialchars($_POST["marital_status"])
+      : (isset($_POST["maritalStatus"])
+          ? htmlspecialchars($_POST["maritalStatus"])
           : "");
   $statusInFamily = $editMode
       ? htmlspecialchars($editResident["status_in_family"])
-      : (isset($_POST["status_in_family"])
-          ? htmlspecialchars($_POST["status_in_family"])
+      : (isset($_POST["statusInFamily"])
+          ? htmlspecialchars($_POST["statusInFamily"])
           : "");
   $address = $editMode
       ? htmlspecialchars($editResident["address"])
@@ -895,13 +912,13 @@ if (isset($_GET["delete"]) && $_GET["delete"] != "") {
           : "");
   $rtNumber = $editMode
       ? htmlspecialchars($editResident["rt_number"])
-      : (isset($_POST["rt_number"])
-          ? htmlspecialchars($_POST["rt_number"])
+      : (isset($_POST["rtNumber"])
+          ? htmlspecialchars($_POST["rtNumber"])
           : "");
   $rwNumber = $editMode
       ? htmlspecialchars($editResident["rw_number"])
-      : (isset($_POST["rw_number"])
-          ? htmlspecialchars($_POST["rw_number"])
+      : (isset($_POST["rwNumber"])
+          ? htmlspecialchars($_POST["rwNumber"])
           : "");
   ?>
       <main class="app-main">
@@ -990,9 +1007,16 @@ if (isset($_GET["deleted"])) {
                           <label for="gender" class="col-sm-2 col-form-label">Gender</label>
                           <div class="col-sm-10">
                             <select class="form-select" id="gender" name="gender" required>
-                              <option selected disabled value="" <?= ($gender == "") ? "selected" : "" ?>>Choose...</option>
-                              <option <?= ($gender == "Laki-laki") ? "selected" : "" ?>>Laki-laki</option>
-                              <option <?= ($gender == "Perempuan") ? "selected" : "" ?>>Perempuan</option>
+                              <option selected disabled value="" <?= $gender ==
+                              ""
+                                  ? "selected"
+                                  : "" ?>>Choose...</option>
+                              <option <?= $gender == "Laki-laki"
+                                  ? "selected"
+                                  : "" ?>>Laki-laki</option>
+                              <option <?= $gender == "Perempuan"
+                                  ? "selected"
+                                  : "" ?>>Perempuan</option>
                             </select>
                           </div>
                       </div>
@@ -1006,12 +1030,25 @@ if (isset($_GET["deleted"])) {
                           <label for="religion" class="col-sm-2 col-form-label">Religion</label>
                           <div class="col-sm-10">
                             <select class="form-select" id="religion" name="religion" required> 
-                              <option selected disabled value="" <?= ($religion == "") ? "selected" : "" ?>>Choose...</option>
-                              <option <?= ($religion == "Islam") ? "selected" : "" ?>>Islam</option>
-                              <option <?= ($religion == "Katolik") ? "selected" : "" ?>>Katolik</option>
-                              <option <?= ($religion == "Kristen") ? "selected" : "" ?>>Kristen</option>
-                              <option <?= ($religion == "Buddha") ? "selected" : "" ?>>Buddha</option>
-                              <option <?= ($religion == "Hindu") ? "selected" : "" ?>>Hindu</option>
+                              <option selected disabled value="" <?= $religion ==
+                              ""
+                                  ? "selected"
+                                  : "" ?>>Choose...</option>
+                              <option <?= $religion == "Islam"
+                                  ? "selected"
+                                  : "" ?>>Islam</option>
+                              <option <?= $religion == "Katolik"
+                                  ? "selected"
+                                  : "" ?>>Katolik</option>
+                              <option <?= $religion == "Kristen"
+                                  ? "selected"
+                                  : "" ?>>Kristen</option>
+                              <option <?= $religion == "Buddha"
+                                  ? "selected"
+                                  : "" ?>>Buddha</option>
+                              <option <?= $religion == "Hindu"
+                                  ? "selected"
+                                  : "" ?>>Hindu</option>
                             </select>
                           </div>
                       </div>
@@ -1019,14 +1056,31 @@ if (isset($_GET["deleted"])) {
                           <label for="occupation" class="col-sm-2 col-form-label">Occupation</label>
                           <div class="col-sm-10">
                             <select class="form-select" id="occupation" name="occupation" required>
-                              <option selected disabled value="" <?= ($occupation == "") ? "selected" : "" ?>>Choose...</option>
-                              <option <?= ($occupation == "Karyawan Swasta") ? "selected" : "" ?>>Karyawan Swasta</option>
-                              <option <?= ($occupation == "Ibu Rumah Tangga") ? "selected" : "" ?>>Ibu Rumah Tangga</option>
-                              <option <?= ($occupation == "Mahasiswa") ? "selected" : "" ?>>Mahasiswa</option>
-                              <option <?= ($occupation == "Guru") ? "selected" : "" ?>>Guru</option>
-                              <option <?= ($occupation == "Pedagang") ? "selected" : "" ?>>Pedagang</option>
-                              <option <?= ($occupation == "Tidak Bekerja") ? "selected" : "" ?>>Tidak Bekerja</option>
-                              <option <?= ($occupation == "Pensiun") ? "selected" : "" ?>>Pensiun</option>
+                              <option selected disabled value="" <?= $occupation ==
+                              ""
+                                  ? "selected"
+                                  : "" ?>>Choose...</option>
+                              <option <?= $occupation == "Karyawan Swasta"
+                                  ? "selected"
+                                  : "" ?>>Karyawan Swasta</option>
+                              <option <?= $occupation == "Ibu Rumah Tangga"
+                                  ? "selected"
+                                  : "" ?>>Ibu Rumah Tangga</option>
+                              <option <?= $occupation == "Mahasiswa"
+                                  ? "selected"
+                                  : "" ?>>Mahasiswa</option>
+                              <option <?= $occupation == "Guru"
+                                  ? "selected"
+                                  : "" ?>>Guru</option>
+                              <option <?= $occupation == "Pedagang"
+                                  ? "selected"
+                                  : "" ?>>Pedagang</option>
+                              <option <?= $occupation == "Tidak Bekerja"
+                                  ? "selected"
+                                  : "" ?>>Tidak Bekerja</option>
+                              <option <?= $occupation == "Pensiun"
+                                  ? "selected"
+                                  : "" ?>>Pensiun</option>
                             </select>
                           </div>
                       </div>
@@ -1034,17 +1088,40 @@ if (isset($_GET["deleted"])) {
                           <label for="education" class="col-sm-2 col-form-label">Education</label>
                           <div class="col-sm-10">
                             <select class="form-select" id="education" name="education" required>
-                              <option selected disabled value="" <?= ($education == "") ? "selected" : "" ?>>Choose...</option>
-                              <option <?= ($education == "SD") ? "selected" : "" ?>>SD</option>
-                              <option <?= ($education == "SMP") ? "selected" : "" ?>>SMP</option>
-                              <option <?= ($education == "SMA") ? "selected" : "" ?>>SMA</option>
-                              <option <?= ($education == "SMK") ? "selected" : "" ?>>SMK</option>
-                              <option <?= ($education == "D1") ? "selected" : "" ?>>D1</option>
-                              <option <?= ($education == "D2") ? "selected" : "" ?>>D2</option>
-                              <option <?= ($education == "D3") ? "selected" : "" ?>>D3</option>
-                              <option <?= ($education == "D4/S1") ? "selected" : "" ?>>D4/S1</option>
-                              <option <?= ($education == "S2") ? "selected" : "" ?>>S2</option>
-                              <option <?= ($education == "S3") ? "selected" : "" ?>>S3</option>
+                              <option selected disabled value="" <?= $education ==
+                              ""
+                                  ? "selected"
+                                  : "" ?>>Choose...</option>
+                              <option <?= $education == "SD"
+                                  ? "selected"
+                                  : "" ?>>SD</option>
+                              <option <?= $education == "SMP"
+                                  ? "selected"
+                                  : "" ?>>SMP</option>
+                              <option <?= $education == "SMA"
+                                  ? "selected"
+                                  : "" ?>>SMA</option>
+                              <option <?= $education == "SMK"
+                                  ? "selected"
+                                  : "" ?>>SMK</option>
+                              <option <?= $education == "D1"
+                                  ? "selected"
+                                  : "" ?>>D1</option>
+                              <option <?= $education == "D2"
+                                  ? "selected"
+                                  : "" ?>>D2</option>
+                              <option <?= $education == "D3"
+                                  ? "selected"
+                                  : "" ?>>D3</option>
+                              <option <?= $education == "D4/S1"
+                                  ? "selected"
+                                  : "" ?>>D4/S1</option>
+                              <option <?= $education == "S2"
+                                  ? "selected"
+                                  : "" ?>>S2</option>
+                              <option <?= $education == "S3"
+                                  ? "selected"
+                                  : "" ?>>S3</option>
                             </select>
                           </div>
                       </div>
@@ -1052,9 +1129,16 @@ if (isset($_GET["deleted"])) {
                           <label for="maritalStatus" class="col-sm-2 col-form-label">Marital Status</label>
                           <div class="col-sm-10">
                             <select class="form-select" id="maritalStatus" name="maritalStatus" required>
-                              <option selected disabled value="" <?= ($maritalStatus == "") ? "selected" : "" ?>>Choose...</option>
-                              <option <?= ($maritalStatus == "Belum Menikah") ? "selected" : "" ?>>Belum Menikah</option>
-                              <option <?= ($maritalStatus == "Menikah") ? "selected" : "" ?>>Menikah</option>
+                              <option selected disabled value="" <?= $maritalStatus ==
+                              ""
+                                  ? "selected"
+                                  : "" ?>>Choose...</option>
+                              <option <?= $maritalStatus == "Belum Menikah"
+                                  ? "selected"
+                                  : "" ?>>Belum Menikah</option>
+                              <option <?= $maritalStatus == "Menikah"
+                                  ? "selected"
+                                  : "" ?>>Menikah</option>
                             </select>
                           </div>
                       </div>
@@ -1062,18 +1146,29 @@ if (isset($_GET["deleted"])) {
                           <label for="statusInFamily" class="col-sm-2 col-form-label">Status in Family</label>
                           <div class="col-sm-10">
                             <select class="form-select" id="statusInFamily" name="statusInFamily" required>
-                              <option selected disabled value="" <?= ($statusInFamily == "") ? "selected" : "" ?>>Choose...</option>
-                              <option <?= ($statusInFamily == "Kepala Keluarga") ? "selected" : "" ?>>Kepala Keluarga</option>
-                              <option <?= ($statusInFamily == "Suami") ? "selected" : "" ?>>Suami</option>
-                              <option <?= ($statusInFamily == "Istri") ? "selected" : "" ?>>Istri</option>
-                              <option <?= ($statusInFamily == "Anak") ? "selected" : "" ?>>Anak</option>
+                              <option selected disabled value="" <?= $statusInFamily ==
+                              ""
+                                  ? "selected"
+                                  : "" ?>>Choose...</option>
+                              <option <?= $statusInFamily == "Kepala Keluarga"
+                                  ? "selected"
+                                  : "" ?>>Kepala Keluarga</option>
+                              <option <?= $statusInFamily == "Suami"
+                                  ? "selected"
+                                  : "" ?>>Suami</option>
+                              <option <?= $statusInFamily == "Istri"
+                                  ? "selected"
+                                  : "" ?>>Istri</option>
+                              <option <?= $statusInFamily == "Anak"
+                                  ? "selected"
+                                  : "" ?>>Anak</option>
                             </select>
                           </div>
                       </div>
                       <div class="row mb-3">
                         <label for="address" class="col-sm-2 col-form-label">Address</label>
                         <div class="col-sm-10">
-                            <textarea name="address" class="form-control" id="address" value="<?php echo $address; ?>" required></textarea>
+                            <textarea name="address" class="form-control" id="address" required><?php echo $address; ?></textarea>
                         </div>
                       </div>
                       <div class="row mb-3">
